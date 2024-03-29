@@ -57,25 +57,52 @@ const Register = () => {
 
     const { name, email, password, mobileNo } = values;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address", toastOptions);
+      return;
+    }
+
+    const mobileRegex = /^\d{10}$/;
+    if (!mobileRegex.test(mobileNo)) {
+      toast.error("Please enter a valid 10-digit mobile number", toastOptions);
+      return;
+    }
+
+    if (password.length < 5) {
+      toast.error("Password must be at least 5 characters long", toastOptions);
+      return;
+    }
+
+    if (!name || !email || !password || !mobileNo) {
+      toast.error("Please fill in all fields", toastOptions);
+      return;
+    }
+
     setLoading(true);
 
-    const { data } = await axios.post(registerAPI, {
-      name,
-      email,
-      password,
-      mobileNo,
-    });
+    try {
+      const { data } = await axios.post(registerAPI, {
+        name,
+        email,
+        password,
+        mobileNo,
+      });
 
-    if (data.success === true) {
-      delete data.user.password;
-      localStorage.setItem("user", JSON.stringify(data.user));
-      toast.success(data.message, toastOptions);
-      setLoading(false);
-      navigate("/");
-    } else {
-      toast.error(data.message, toastOptions);
-      setLoading(false);
+      if (data.success === true) {
+        delete data.user.password;
+        localStorage.setItem("user", JSON.stringify(data.user));
+        toast.success(data.message, toastOptions);
+        navigate("/");
+      } else {
+        toast.error(data.message, toastOptions);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred", toastOptions);
     }
+
+    setLoading(false);
   };
 
   return (
@@ -96,7 +123,7 @@ const Register = () => {
                   <h1 className="font-medium text-2xl text-gray-500 mt-4">
                     Welcome to Expense Management System{" "}
                     <AccountBalanceWalletIcon
-                      sx={{ fontSize: 40, color: "black" }}
+                      sx={{ fontSize: 40, color: "gray-500" }}
                       className="text-center"
                     />
                   </h1>
@@ -179,7 +206,7 @@ const Register = () => {
                       >
                         Sign Up
                       </button>
-                      <button className="flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4  rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 ">
+                      {/* <button className="flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4  rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 ">
                         <svg
                           width="24"
                           height="24"
@@ -205,7 +232,7 @@ const Register = () => {
                           />
                         </svg>
                         Sign up with Google
-                      </button>
+                      </button> */}
                     </div>
                     <div className="flex justify-center items-center">
                       <p className="mt-3" style={{ color: "#9d9494" }}>

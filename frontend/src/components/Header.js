@@ -147,6 +147,11 @@ const Header = () => {
           style={{ position: "relative", zIndex: "2 !important" }}
         >
           <Navbar.Brand
+            style={{
+              fontFamily: "San Francisco",
+              fontWeight: "bold",
+              fontSize: "25px",
+            }}
             href="/"
             className=" font-bold px-2 py-1 bg-gradient-to-r from-gray-500 via-blueGray-500 to-coolGray-500 rounded-lg text-white"
           >
@@ -215,7 +220,14 @@ const Header = () => {
                                 <div class="space-y-2 flex flex-col flex-1 truncate">
                                   <div class="font-medium relative text-xl leading-tight text-gray-900">
                                     <span class="flex">
-                                      <span class="truncate relative pr-8">
+                                      <span
+                                        style={{
+                                          fontFamily: "San Francisco",
+                                          fontWeight: "bold",
+                                          fontSize: "18px",
+                                        }}
+                                        class="truncate relative pr-8"
+                                      >
                                         {user.name}
                                         <span
                                           aria-label="verified"
@@ -249,7 +261,14 @@ const Header = () => {
                                       </span>
                                     </span>
                                   </div>
-                                  <p class="font-normal text-base leading-tight text-gray-500 truncate">
+                                  <p
+                                    style={{
+                                      fontFamily: "San Francisco",
+                                      fontWeight: "bold",
+                                      fontSize: "18px",
+                                    }}
+                                    class="font-normal text-base leading-tight text-gray-500 truncate"
+                                  >
                                     {user.email}
                                   </p>
                                 </div>
@@ -283,7 +302,16 @@ const Header = () => {
                                   <path d="M9 12h12l-3 -3"></path>
                                   <path d="M18 15l3 -3"></path>
                                 </svg>
-                                <span onClick={handleShowLogout}>Logout</span>
+                                <span
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                    fontSize: "18px",
+                                  }}
+                                  onClick={handleShowLogout}
+                                >
+                                  Logout
+                                </span>
                               </button>
                             </div>
                           </div>

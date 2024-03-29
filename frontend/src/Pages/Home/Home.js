@@ -1,9 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Header from "../../components/Header";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Modal, Form, Container } from "react-bootstrap";
 import "./home.css";
-import { addTransaction, getTransactions } from "../../utils/ApiRequest";
+import {
+  addTransaction,
+  getTransactions,
+  getAllCategories,
+} from "../../utils/ApiRequest";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,11 +15,7 @@ import Spinner from "../../components/Spinner";
 import TableData from "./TableData";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import Analytics from "./Analytics";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -41,6 +41,7 @@ const Home = () => {
   const [endDate, setEndDate] = useState(null);
   const [view, setView] = useState("table");
   const [currency, setCurrency] = useState();
+  const [sortBy, setSortBy] = useState("all");
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -155,6 +156,7 @@ const Home = () => {
     setStartDate(null);
     setEndDate(null);
     setFrequency("7");
+    setSortBy(null);
   };
 
   useEffect(() => {
@@ -169,6 +171,18 @@ const Home = () => {
           endDate: endDate,
           type: type,
         });
+        let sortedTransactions = [...data.transactions];
+
+        if (sortBy === "price") {
+          sortedTransactions = data.transactions.sort(
+            (a, b) => a.amount - b.amount
+          );
+        } else if (sortBy === "date") {
+          sortedTransactions = data.transactions.sort(
+            (a, b) => new Date(a.date) - new Date(b.date)
+          );
+        }
+        setTransactions(sortedTransactions);
         console.log(data);
 
         setTransactions(data.transactions);
@@ -181,7 +195,7 @@ const Home = () => {
     };
 
     fetchAllTransactions();
-  }, [refresh, frequency, endDate, type, startDate]);
+  }, [refresh, frequency, endDate, type, startDate, sortBy]);
 
   const handleTableClick = (e) => {
     setView("table");
@@ -194,6 +208,10 @@ const Home = () => {
   const categories = [
     ...new Set(transactions.map((transaction) => transaction.category)),
   ];
+
+  const handleSortChange = (e) => {
+    setSortBy(e.target.value);
+  };
 
   return (
     <>
@@ -211,12 +229,23 @@ const Home = () => {
           >
             <div className="filterRow">
               <div className="text-white">
-                <Form.Group className="mb-3" controlId="formSelectFrequency">
+                <Form.Group
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                  }}
+                  className="mb-3"
+                  controlId="formSelectFrequency"
+                >
                   <Form.Label>Select Frequency</Form.Label>
                   <Form.Select
                     name="frequency"
                     value={frequency}
                     onChange={handleChangeFrequency}
+                    style={{
+                      fontFamily: "San Francisco",
+                      fontWeight: "bold",
+                    }}
                   >
                     <option value="7">Last Week</option>
                     <option value="30">Last Month</option>
@@ -228,11 +257,22 @@ const Home = () => {
 
               <div className="text-white type">
                 <Form.Group className="mb-3" controlId="formSelectFrequency">
-                  <Form.Label>Type</Form.Label>
+                  <Form.Label
+                    style={{
+                      fontFamily: "San Francisco",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Type
+                  </Form.Label>
                   <Form.Select
                     name="type"
                     value={type}
                     onChange={handleSetType}
+                    style={{
+                      fontFamily: "San Francisco",
+                      fontWeight: "bold",
+                    }}
                   >
                     <option value="all">All</option>
                     <option value="expense">Expense</option>
@@ -241,14 +281,33 @@ const Home = () => {
                 </Form.Group>
               </div>
 
+              <div className="text-white type">
+                <Form.Group className="mb-3" controlId="formSelectFrequency">
+                  <Form.Label
+                    style={{
+                      fontFamily: "San Francisco",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Sort by
+                  </Form.Label>
+                  <Form.Select
+                    name="sort"
+                    value={sortBy}
+                    onChange={handleSortChange}
+                    style={{
+                      fontFamily: "San Francisco",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    <option value="all">All</option>
+                    <option value="price">Amount</option>
+                    <option value="date">Date</option>
+                  </Form.Select>
+                </Form.Group>
+              </div>
+
               <div className="text-white iconBtnBox">
-                {/* <FormatListBulletedIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={handleTableClick}
-                  className={`${
-                    view === "table" ? "iconActive" : "iconDeactive"
-                  }`}
-                /> */}
                 <lord-icon
                   src="https://cdn.lordicon.com/yqiuuheo.json"
                   trigger="hover"
@@ -258,13 +317,7 @@ const Home = () => {
                   style={{ cursor: "pointer" }}
                   onClick={handleTableClick}
                 ></lord-icon>
-                {/* <BarChartIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={handleChartClick}
-                  className={`${
-                    view === "chart" ? "iconActive" : "iconDeactive"
-                  }`}
-                /> */}
+
                 <lord-icon
                   src="https://cdn.lordicon.com/zsaomnmb.json"
                   trigger="hover"
@@ -274,22 +327,16 @@ const Home = () => {
               </div>
 
               <div className="flex">
-                {/* <Button
-                  variant="outline-primary"
-                  size="lg"
-                  onClick={handleShow}
-                  className="addNew"
-                >
-                  Add New
-                </Button> */}
-                <lord-icon
-                  src="https://cdn.lordicon.com/pdsourfn.json"
-                  trigger="hover"
-                  stroke="bold"
-                  onClick={handleShow}
-                  colors="primary:#121331,secondary:#ffffff,tertiary:#ebe6ef"
-                  style={{ width: "70px", height: "70px", cursor: "pointer" }}
-                ></lord-icon>
+                <Link to={"/addtransactions"}>
+                  <lord-icon
+                    src="https://cdn.lordicon.com/pdsourfn.json"
+                    trigger="hover"
+                    stroke="bold"
+                    onClick={handleShow}
+                    colors="primary:#121331,secondary:#ffffff,tertiary:#ebe6ef"
+                    style={{ width: "70px", height: "70px", cursor: "pointer" }}
+                  ></lord-icon>
+                </Link>
 
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
@@ -409,7 +456,6 @@ const Home = () => {
                   <Modal.Footer>
                     <button
                       class=" hover:bg-red-500 text-red-700 font-semibold hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-                      // variant="outline-danger"
                       onClick={handleClose}
                     >
                       Close
@@ -465,9 +511,6 @@ const Home = () => {
             )}
 
             <div className="containerBtn">
-              {/* <Button variant="outline-warning" onClick={handleReset}>
-                Reset Filter
-              </Button> */}
               <lord-icon
                 src="https://cdn.lordicon.com/cjbuodml.json"
                 trigger="hover"

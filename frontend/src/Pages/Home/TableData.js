@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form, Modal, Table } from "react-bootstrap";
 import moment from "moment";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import "./home.css";
-import { deleteTransactions, editTransactions } from "../../utils/ApiRequest";
+import {
+  deleteTransactions,
+  editTransactions,
+  getAllCategories,
+} from "../../utils/ApiRequest";
 import axios from "axios";
 import { Toast } from "react-bootstrap";
 import Details from "../Details/Details";
@@ -27,6 +29,8 @@ const TableData = (props) => {
   const [currId, setCurrId] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const [user, setUser] = useState(null);
+  const [dbCategories, setdbCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const handleEditClick = (itemKey) => {
     console.log("Clicked button ID:", itemKey);
@@ -39,22 +43,36 @@ const TableData = (props) => {
   };
 
   // const handleEditSubmit = async (e) => {
-  //   const { data } = await axios.put(`${editTransactions}/${currId}`, {
-  //     ...values,
+  //   e.preventDefault();
+
+  //   // Show SweetAlert2 confirmation dialog
+  //   const result = await Swal.fire({
+  //     title: "Do you want to save the changes?",
+  //     showDenyButton: true,
+  //     showCancelButton: true,
+  //     confirmButtonText: "Save",
+  //     denyButtonText: `Don't save`,
   //   });
 
-  //   if (data.success === true) {
-  //     await handleClose();
-  //     await setRefresh(!refresh);
-  //     window.location.reload();
-  //   } else {
-  //     console.log("error");
+  //   if (result.isConfirmed) {
+  //     const { data } = await axios.put(`${editTransactions}/${currId}`, {
+  //       ...values,
+  //     });
+
+  //     if (data.success === true) {
+  //       await handleClose();
+  //       await setRefresh(!refresh);
+  //       window.location.reload();
+  //     } else {
+  //       console.log("error");
+  //     }
+  //   } else if (result.isDenied) {
+  //     Swal.fire("Changes are not saved", "", "info");
   //   }
   // };
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
-    // Show SweetAlert2 confirmation dialog
     const result = await Swal.fire({
       title: "Do you want to save the changes?",
       showDenyButton: true,
@@ -80,21 +98,6 @@ const TableData = (props) => {
     }
   };
 
-  // const handleDeleteClick = async (itemKey) => {
-  //   console.log(user._id);
-  //   console.log("Clicked button ID delete:", itemKey);
-  //   setCurrId(itemKey);
-  //   const { data } = await axios.post(`${deleteTransactions}/${itemKey}`, {
-  //     userId: props.user._id,
-  //   });
-
-  //   if (data.success === true) {
-  //     await setRefresh(!refresh);
-  //     window.location.reload();
-  //   } else {
-  //     Toast.error("Something went wrong!");
-  //   }
-  // };
   const handleDeleteClick = async (itemKey) => {
     console.log(user._id);
     console.log("Clicked button ID delete:", itemKey);
@@ -207,17 +210,59 @@ const TableData = (props) => {
     XLSX.writeFile(wb, "transactions.xlsx");
   };
 
+  const handleCategorySelect = async (category) => {
+    try {
+      if (selectedCategory === category) {
+        setSelectedCategory(null);
+      } else {
+        setSelectedCategory(category);
+      }
+      const { data } = await axios.put(`${editTransactions}/${currId}`, {
+        category: category,
+      });
+
+      if (data.success === true) {
+        await setRefresh(!refresh);
+        // window.location.reload();
+      } else {
+        console.log("error");
+      }
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(getAllCategories);
+        setdbCategories(response.data.categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [refresh]);
+
   return (
     <>
       <Container>
         <Table
           responsive="md"
-          className=" border-dashed hover:border-solid border-2  border-sky-800 data-table"
+          className="rounded-table border-dashed hover:border-solid border-2  border-sky-800 data-table"
         >
           <thead>
             <tr>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Date
                   <lord-icon
                     src="https://cdn.lordicon.com/wmlleaaf.json"
@@ -227,7 +272,14 @@ const TableData = (props) => {
                 </div>
               </th>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Title
                   <lord-icon
                     src="https://cdn.lordicon.com/fnxnvref.json"
@@ -237,7 +289,14 @@ const TableData = (props) => {
                 </div>
               </th>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Amount
                   <lord-icon
                     src="https://cdn.lordicon.com/ncitidvz.json"
@@ -247,7 +306,14 @@ const TableData = (props) => {
                 </div>
               </th>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Type
                   <lord-icon
                     src="https://cdn.lordicon.com/ipnwkgdy.json"
@@ -257,7 +323,14 @@ const TableData = (props) => {
                 </div>
               </th>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Category
                   <lord-icon
                     src="https://cdn.lordicon.com/jnikqyih.json"
@@ -267,7 +340,14 @@ const TableData = (props) => {
                 </div>
               </th>
               <th>
-                <div className="flex">
+                <div
+                  className="flex"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Action
                   <lord-icon
                     src="https://cdn.lordicon.com/xkmjbjuw.json"
@@ -278,22 +358,26 @@ const TableData = (props) => {
               </th>
             </tr>
           </thead>
-          <tbody className="text-white">
+          <tbody
+            style={{
+              fontFamily: "San Francisco",
+              fontSize: "18px",
+            }}
+            className="text-white"
+          >
             {props.data.map((item, index) => (
               <tr key={index}>
                 <td>{moment(item.date).format("YYYY-MM-DD")}</td>
                 <td>{item.title}</td>
                 <td>{item.amount}</td>
                 <td>{item.transactionType}</td>
-                <td>{item.category}</td>
+                <td>
+                  {dbCategories.find(
+                    (category) => category._id === item.category
+                  )?.name || item.category}
+                </td>
                 <td>
                   <div className="icons-handle">
-                    {/* <EditNoteIcon
-                      sx={{ cursor: "pointer" }}
-                      key={item._id}
-                      id={item._id}
-                      onClick={() => handleEditClick(item._id)}
-                    /> */}
                     <lord-icon
                       src="https://cdn.lordicon.com/lsrcesku.json"
                       trigger="hover"
@@ -304,12 +388,6 @@ const TableData = (props) => {
                       onClick={() => handleEditClick(item._id)}
                     ></lord-icon>
 
-                    {/* <DeleteForeverIcon
-                      sx={{ color: "red", cursor: "pointer" }}
-                      key={index}
-                      id={item._id}
-                      onClick={() => handleDeleteClick(item._id)}
-                    /> */}
                     <lord-icon
                       src="https://cdn.lordicon.com/xekbkxul.json"
                       trigger="hover"
@@ -326,7 +404,13 @@ const TableData = (props) => {
                         <div>
                           <Modal show={show} onHide={handleClose} centered>
                             <Modal.Header closeButton>
-                              <Modal.Title>
+                              <Modal.Title
+                                style={{
+                                  fontFamily: "Kanit, sans-serif",
+                                  fontWeight: "bold",
+                                }}
+                                className=" text-[#07074D]"
+                              >
                                 Update Transaction Details
                               </Modal.Title>
                             </Modal.Header>
@@ -336,7 +420,13 @@ const TableData = (props) => {
                                   className="mb-3"
                                   controlId="formName"
                                 >
-                                  <Form.Label className="mb-1 block text-base font-medium text-[#07074D]">
+                                  <Form.Label
+                                    style={{
+                                      fontFamily: "San Francisco",
+                                      fontWeight: "bold",
+                                    }}
+                                    className="mb-1 block text-base font-medium text-[#07074D]"
+                                  >
                                     Transaction Name
                                   </Form.Label>
                                   <Form.Control
@@ -349,23 +439,14 @@ const TableData = (props) => {
                                   />
                                 </Form.Group>
 
-                                {/* <Form.Group
-                                  className="mb-3"
-                                  controlId="formAmount"
-                                >
-                                  <Form.Label>Amount</Form.Label>
-                                  <Form.Control
-                                    name="amount"
-                                    type="number"
-                                    placeholder={editingTransaction[0].amount}
-                                    value={values.amount}
-                                    onChange={handleChange}
-                                  />
-                                </Form.Group> */}
                                 <div className="mb-3 flex gap-3">
                                   <Form.Group
                                     className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                                     controlId="formSelect"
+                                    style={{
+                                      fontFamily: "San Francisco",
+                                      fontWeight: "bold",
+                                    }}
                                   >
                                     <Form.Label>Currency</Form.Label>
                                     <Form.Select
@@ -386,6 +467,10 @@ const TableData = (props) => {
                                   <Form.Group
                                     className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                                     controlId="formAmount"
+                                    style={{
+                                      fontFamily: "San Francisco",
+                                      fontWeight: "bold",
+                                    }}
                                   >
                                     <Form.Label>Amount</Form.Label>
                                     <Form.Control
@@ -401,21 +486,91 @@ const TableData = (props) => {
                                 <Form.Group
                                   className="mb-1 block text-base font-medium text-[#07074D]"
                                   controlId="formName"
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                  }}
                                 >
                                   <Form.Label>Category</Form.Label>
                                   <Form.Control
                                     name="category"
                                     type="text"
                                     className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                    placeholder={editTransactions[0].category}
+                                    // placeholder={
+                                    //   editingTransaction[0].category ||
+                                    //   editingTransaction[0].dbCategories
+                                    // }
+                                    placeholder="Add New Category"
                                     value={values.category}
                                     onChange={handleChange}
                                   />
                                 </Form.Group>
+                                <div class="flex items-center">
+                                  <div class="flex-1 border-t-2 border-gray-200"></div>
+                                  <span
+                                    style={{
+                                      fontFamily: "San Francisco",
+                                      fontWeight: "bold",
+                                    }}
+                                    class="px-3 text-gray-500 bg-white"
+                                  >
+                                    OR choose from these
+                                  </span>
+                                  <div class="flex-1 border-t-2 border-gray-200"></div>
+                                </div>
+                                <div
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                  }}
+                                  className="text-[#07074D] font-semibold"
+                                >
+                                  Available Categories
+                                </div>
+                                <div className="mt-2">
+                                  {dbCategories.map(
+                                    (category, index) =>
+                                      index % 4 === 0 && (
+                                        <div
+                                          key={index}
+                                          className="d-flex flex-wrap"
+                                        >
+                                          {dbCategories
+                                            .slice(index, index + 4)
+                                            .map((category) => (
+                                              <Button
+                                                type="button"
+                                                key={category._id}
+                                                variant={
+                                                  selectedCategory === category
+                                                    ? "secondary"
+                                                    : "outline-secondary"
+                                                }
+                                                onClick={() =>
+                                                  handleCategorySelect(category)
+                                                }
+                                                className="me-2 mb-2 text-black"
+                                                style={{
+                                                  fontFamily: "San Francisco",
+                                                  fontWeight: "bold",
+                                                  width: "100px",
+                                                }}
+                                              >
+                                                {category.name}
+                                              </Button>
+                                            ))}
+                                        </div>
+                                      )
+                                  )}
+                                </div>
 
                                 <Form.Group
                                   className="mt-1 block text-base font-medium text-[#07074D]"
                                   controlId="formDescription"
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                  }}
                                 >
                                   <Form.Label>Description</Form.Label>
                                   <Form.Control
@@ -433,6 +588,10 @@ const TableData = (props) => {
                                 <Form.Group
                                   className="mt-1 block text-base font-medium text-[#07074D]"
                                   controlId="formSelect1"
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                  }}
                                 >
                                   <Form.Label>Transaction Type</Form.Label>
                                   <Form.Select
@@ -447,14 +606,18 @@ const TableData = (props) => {
                                     >
                                       {editingTransaction[0].transactionType}
                                     </option>
-                                    <option value="Income">Income</option>
-                                    <option value="Expense">Expense</option>
+                                    <option value="credit">Income</option>
+                                    <option value="expense">Expense</option>
                                   </Form.Select>
                                 </Form.Group>
 
                                 <Form.Group
                                   className="mt-1 block text-base font-medium text-[#07074D]"
                                   controlId="formDate"
+                                  style={{
+                                    fontFamily: "San Francisco",
+                                    fontWeight: "bold",
+                                  }}
                                 >
                                   <Form.Label>Date</Form.Label>
                                   <Form.Control
@@ -470,6 +633,10 @@ const TableData = (props) => {
                               <Button
                                 variant="outline-danger"
                                 onClick={handleClose}
+                                style={{
+                                  fontFamily: "San Francisco",
+                                  fontWeight: "bold",
+                                }}
                               >
                                 Close
                               </Button>
@@ -477,6 +644,10 @@ const TableData = (props) => {
                                 variant="outline-success"
                                 type="submit"
                                 onClick={handleEditSubmit}
+                                style={{
+                                  fontFamily: "San Francisco",
+                                  fontWeight: "bold",
+                                }}
                               >
                                 Submit
                               </Button>
@@ -487,7 +658,6 @@ const TableData = (props) => {
                     ) : (
                       <></>
                     )}
-                    {/* <Details /> */}
                   </div>
                 </td>
               </tr>
@@ -498,6 +668,10 @@ const TableData = (props) => {
           <button
             onClick={exportToExcel}
             class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center "
+            style={{
+              fontFamily: "San Francisco",
+              fontWeight: "bold",
+            }}
           >
             <svg
               class="fill-current w-4 h-4 mr-2"
@@ -506,7 +680,14 @@ const TableData = (props) => {
             >
               <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
             </svg>
-            <span>Download</span>
+            <span
+              style={{
+                fontFamily: "San Francisco",
+                fontWeight: "bold",
+              }}
+            >
+              Download
+            </span>
           </button>
         </div>
       </Container>

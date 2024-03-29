@@ -9,6 +9,8 @@ import transactionRoutes from "./Routers/Transactions.js";
 import userRoutes from "./Routers/userRouter.js";
 import path from "path";
 import adminRoute from "./Routers/admin-router.js";
+import categoryRoutes from "./Routers/CategoryRoutes.js";
+
 dotenv.config({ path: "./config/config.env" });
 const app = express();
 
@@ -35,6 +37,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/api/v1", transactionRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/admin", adminRoute);
+app.use("/api/v1/category", categoryRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

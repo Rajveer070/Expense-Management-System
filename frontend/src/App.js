@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./Pages/Home/Home";
 import SetAvatar from "./Pages/Avatar/setAvatar";
 import Details from "./Pages/Details/Details";
+import AddDetails from "./Pages/Home/AddDetails";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/setAvatar" element={<SetAvatar />} />
           <Route path="/details" element={<Details />} />
+          <Route path="/addtransactions" element={<AddDetails />} />
         </Routes>
       </BrowserRouter>
     </div>

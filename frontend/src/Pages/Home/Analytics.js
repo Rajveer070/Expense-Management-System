@@ -1,10 +1,11 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import { Container, Row } from "react-bootstrap";
 import CircularProgressBar from "../../components/CircularProgressBar";
 import LineProgressBar from "../../components/LineProgressBar";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { getAllCategories } from "../../utils/ApiRequest";
 
 const Analytics = ({ transactions, categories }) => {
   const TotalTransactions = transactions.length;
@@ -63,6 +64,20 @@ const Analytics = ({ transactions, categories }) => {
   const generateRandomColor = () => {
     return "#" + Math.floor(Math.random() * 16777215).toString(16);
   };
+  const [dbCategories, setdbCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAllCategories(); // Fetch categories from backend
+        setdbCategories(response.data.categories); // Assuming response.data.categories is an array of category names
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <>
@@ -71,17 +86,37 @@ const Analytics = ({ transactions, categories }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header bg-black text-white">
-                <span style={{ fontWeight: "bold" }}>
+                <span
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
                   Total Transactions :{" "}
                 </span>{" "}
                 {TotalTransactions}
               </div>
               <div className="card-body">
-                <h5 className="card-title " style={{ color: "green" }}>
+                <h5
+                  className="card-title "
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    color: "green",
+                  }}
+                >
                   Income : <ArrowDropUpIcon />
                   {totalIncomeTransactions.length}
                 </h5>
-                <h5 className="card-title" style={{ color: "red" }}>
+                <h5
+                  className="card-title"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    color: "red",
+                  }}
+                >
                   Expense : <ArrowDropDownIcon />
                   {totalExpenseTransactions.length}
                 </h5>
@@ -106,15 +141,37 @@ const Analytics = ({ transactions, categories }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header bg-black text-white ">
-                <span style={{ fontWeight: "bold" }}>Total TurnOver : </span>{" "}
+                <span
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
+                  Total TurnOver :{" "}
+                </span>{" "}
                 {totalTurnOver}
               </div>
               <div className="card-body">
-                <h5 className="card-title" style={{ color: "green" }}>
+                <h5
+                  className="card-title"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    color: "green",
+                  }}
+                >
                   Income: <ArrowDropUpIcon /> {totalTurnOverIncome}{" "}
                   <CurrencyRupeeIcon />
                 </h5>
-                <h5 className="card-title" style={{ color: "red" }}>
+                <h5
+                  className="card-title"
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    color: "red",
+                  }}
+                >
                   Expense: <ArrowDropDownIcon />
                   {totalTurnOverExpense} <CurrencyRupeeIcon />
                 </h5>
@@ -138,9 +195,23 @@ const Analytics = ({ transactions, categories }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header  bg-black text-white">
-                <span style={{ fontWeight: "bold" }}>Categorywise Income</span>{" "}
+                <span
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                    fontSize: "18px",
+                  }}
+                >
+                  Categorywise Income
+                </span>{" "}
               </div>
-              <div className="card-body">
+              <div
+                className="card-body"
+                style={{
+                  fontFamily: "San Francisco",
+                  fontWeight: "bold",
+                }}
+              >
                 {categories.map((category) => {
                   const income = transactions
                     .filter(
@@ -171,9 +242,23 @@ const Analytics = ({ transactions, categories }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header  bg-black text-white">
-                <span style={{ fontWeight: "bold" }}>Categorywise Expense</span>{" "}
+                <span
+                  style={{
+                    fontFamily: "San Francisco",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Categorywise Expense
+                </span>{" "}
               </div>
-              <div className="card-body">
+              <div
+                className="card-body"
+                style={{
+                  fontFamily: "San Francisco",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                }}
+              >
                 {categories.map((category) => {
                   const expenses = transactions
                     .filter(

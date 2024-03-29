@@ -43,22 +43,37 @@ const Login = () => {
 
     const { email, password } = values;
 
+    if (!email || !password) {
+      toast.error("All fields are required!", toastOptions);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address", toastOptions);
+      return;
+    }
+
     setLoading(true);
 
-    const { data } = await axios.post(loginAPI, {
-      email,
-      password,
-    });
+    try {
+      const { data } = await axios.post(loginAPI, {
+        email,
+        password,
+      });
 
-    if (data.success === true) {
-      localStorage.setItem("user", JSON.stringify(data.user));
-      navigate("/");
-      toast.success(data.message, toastOptions);
-      setLoading(false);
-    } else {
-      toast.error(data.message, toastOptions);
-      setLoading(false);
+      if (data.success === true) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/");
+        toast.success(data.message, toastOptions);
+      } else {
+        toast.error(data.message, toastOptions);
+      }
+    } catch (error) {
+      toast.error("Incorrect email or password", toastOptions);
     }
+
+    setLoading(false);
   };
 
   const particlesInit = useCallback(async (engine) => {
@@ -139,7 +154,7 @@ const Login = () => {
                     >
                       Sign in
                     </button>
-                    <button className="flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4  rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 ">
+                    {/* <button className="flex items-center justify-center gap-2 active:scale-[.98] active:duration-75 transition-all hover:scale-[1.01]  ease-in-out transform py-4  rounded-xl text-gray-700 font-semibold text-lg border-2 border-gray-100 ">
                       <svg
                         width="24"
                         height="24"
@@ -165,11 +180,11 @@ const Login = () => {
                         />
                       </svg>
                       Sign in with Google
-                    </button>
+                    </button> */}
                   </div>
                   <div className="flex justify-center items-center">
                     <p className="mt-3" style={{ color: "#9d9494" }}>
-                      Already have an account?{" "}
+                      Don't have an account?{" "}
                       <Link to="/Register" className="text-black lnk">
                         Sign up
                       </Link>
