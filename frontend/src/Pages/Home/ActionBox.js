@@ -6,14 +6,11 @@ import { editTransactions } from "../../utils/ApiRequest";
 import axios from "axios";
 
 const ActionBox = (props) => {
-
-    const [index, setIndex] = useState();
-
+  const [index, setIndex] = useState();
 
   const handleEditClick = async (e) => {
     e.preventDefault();
     setIndex(index);
-
   };
 
   const handleDeleteClick = async (e) => {

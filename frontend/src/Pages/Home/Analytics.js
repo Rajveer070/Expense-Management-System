@@ -5,9 +5,8 @@ import LineProgressBar from "../../components/LineProgressBar";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { html2canvas } from "html2canvas";
 
-const Analytics = ({ transactions }) => {
+const Analytics = ({ transactions, categories }) => {
   const TotalTransactions = transactions.length;
   const totalIncomeTransactions = transactions.filter(
     (item) => item.transactionType === "credit"
@@ -35,18 +34,19 @@ const Analytics = ({ transactions }) => {
   const TurnOverIncomePercent = (totalTurnOverIncome / totalTurnOver) * 100;
   const TurnOverExpensePercent = (totalTurnOverExpense / totalTurnOver) * 100;
 
-  const categories = [
-    "Groceries",
-    "Rent",
-    "Salary",
-    "Tip",
-    "Food",
-    "Medical",
-    "Utilities",
-    "Entertainment",
-    "Transportation",
-    "Other",
-  ];
+  // const categories = [
+  //   "Groceries",
+  //   "Rent",
+  //   "Salary",
+  //   "Tip",
+  //   "Food",
+  //   "Medical",
+  //   "Utilities",
+  //   "Entertainment",
+  //   "Transportation",
+  //   "Other",
+  // ];
+  // const categories = transactions.category;
 
   const colors = {
     Groceries: "#FF6384",
@@ -60,6 +60,9 @@ const Analytics = ({ transactions }) => {
     Transportation: "#1982C4",
     Other: "#F45B69",
   };
+  const generateRandomColor = () => {
+    return "#" + Math.floor(Math.random() * 16777215).toString(16);
+  };
 
   return (
     <>
@@ -68,16 +71,18 @@ const Analytics = ({ transactions }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header bg-black text-white">
-                <span style={{ fontWeight: "bold" }}>Total Transactions:</span>{" "}
+                <span style={{ fontWeight: "bold" }}>
+                  Total Transactions :{" "}
+                </span>{" "}
                 {TotalTransactions}
               </div>
               <div className="card-body">
                 <h5 className="card-title " style={{ color: "green" }}>
-                  Income: <ArrowDropUpIcon />
+                  Income : <ArrowDropUpIcon />
                   {totalIncomeTransactions.length}
                 </h5>
                 <h5 className="card-title" style={{ color: "red" }}>
-                  Expense: <ArrowDropDownIcon />
+                  Expense : <ArrowDropDownIcon />
                   {totalExpenseTransactions.length}
                 </h5>
 
@@ -101,7 +106,7 @@ const Analytics = ({ transactions }) => {
           <div className="col-lg-3 col-md-6 mb-4">
             <div className="card h-100">
               <div className="card-header bg-black text-white ">
-                <span style={{ fontWeight: "bold" }}>Total TurnOver:</span>{" "}
+                <span style={{ fontWeight: "bold" }}>Total TurnOver : </span>{" "}
                 {totalTurnOver}
               </div>
               <div className="card-body">
@@ -153,7 +158,7 @@ const Analytics = ({ transactions }) => {
                         <LineProgressBar
                           label={category}
                           percentage={incomePercent.toFixed(0)}
-                          lineColor={colors[category]}
+                          lineColor={generateRandomColor()}
                         />
                       )}
                     </>

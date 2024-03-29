@@ -6,6 +6,7 @@ import Register from "./Pages/Auth/Register";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./Pages/Home/Home";
 import SetAvatar from "./Pages/Avatar/setAvatar";
+import Details from "./Pages/Details/Details";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/setAvatar" element={<SetAvatar />} />
+          <Route path="/details" element={<Details />} />
         </Routes>
       </BrowserRouter>
     </div>

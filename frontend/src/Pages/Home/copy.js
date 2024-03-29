@@ -7,9 +7,9 @@ import "./home.css";
 import { deleteTransactions, editTransactions } from "../../utils/ApiRequest";
 import axios from "axios";
 import { Toast } from "react-bootstrap";
-import Details from "../Details/Details";
 import * as XLSX from "xlsx";
 import Swal from "sweetalert2";
+
 const toastOptions = {
   position: "bottom-right",
   autoClose: 2000,
@@ -38,47 +38,47 @@ const TableData = (props) => {
     }
   };
 
-  // const handleEditSubmit = async (e) => {
-  //   const { data } = await axios.put(`${editTransactions}/${currId}`, {
-  //     ...values,
-  //   });
-
-  //   if (data.success === true) {
-  //     await handleClose();
-  //     await setRefresh(!refresh);
-  //     window.location.reload();
-  //   } else {
-  //     console.log("error");
-  //   }
-  // };
   const handleEditSubmit = async (e) => {
-    e.preventDefault();
-
-    // Show SweetAlert2 confirmation dialog
-    const result = await Swal.fire({
-      title: "Do you want to save the changes?",
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      denyButtonText: `Don't save`,
+    const { data } = await axios.put(`${editTransactions}/${currId}`, {
+      ...values,
     });
 
-    if (result.isConfirmed) {
-      const { data } = await axios.put(`${editTransactions}/${currId}`, {
-        ...values,
-      });
-
-      if (data.success === true) {
-        await handleClose();
-        await setRefresh(!refresh);
-        window.location.reload();
-      } else {
-        console.log("error");
-      }
-    } else if (result.isDenied) {
-      Swal.fire("Changes are not saved", "", "info");
+    if (data.success === true) {
+      await handleClose();
+      await setRefresh(!refresh);
+      window.location.reload();
+    } else {
+      console.log("error");
     }
   };
+  // const handleEditSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // Show SweetAlert2 confirmation dialog
+  //   const result = await Swal.fire({
+  //     title: "Do you want to save the changes?",
+  //     showDenyButton: true,
+  //     showCancelButton: true,
+  //     confirmButtonText: "Save",
+  //     denyButtonText: `Don't save`,
+  //   });
+
+  //   if (result.isConfirmed) {
+  //     const { data } = await axios.put(`${editTransactions}/${currId}`, {
+  //       ...values,
+  //     });
+
+  //     if (data.success === true) {
+  //       await handleClose();
+  //       await setRefresh(!refresh);
+  //       window.location.reload();
+  //     } else {
+  //       console.log("error");
+  //     }
+  //   } else if (result.isDenied) {
+  //     Swal.fire("Changes are not saved", "", "info");
+  //   }
+  // };
 
   // const handleDeleteClick = async (itemKey) => {
   //   console.log(user._id);
@@ -281,7 +281,7 @@ const TableData = (props) => {
           <tbody className="text-white">
             {props.data.map((item, index) => (
               <tr key={index}>
-                <td>{moment(item.date).format("YYYY-MM-DD")}</td>
+                <td>{moment(item.date).format("DD-MM-YYYY")}</td>
                 <td>{item.title}</td>
                 <td>{item.amount}</td>
                 <td>{item.transactionType}</td>
@@ -326,7 +326,7 @@ const TableData = (props) => {
                         <div>
                           <Modal show={show} onHide={handleClose} centered>
                             <Modal.Header closeButton>
-                              <Modal.Title>
+                              <Modal.Title className="text-[#07074D]">
                                 Update Transaction Details
                               </Modal.Title>
                             </Modal.Header>
@@ -337,12 +337,11 @@ const TableData = (props) => {
                                   controlId="formName"
                                 >
                                   <Form.Label className="mb-1 block text-base font-medium text-[#07074D]">
-                                    Transaction Name
+                                    Title
                                   </Form.Label>
                                   <Form.Control
                                     name="title"
                                     type="text"
-                                    className="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                                     placeholder={editingTransaction[0].title}
                                     value={values.title}
                                     onChange={handleChange}
@@ -350,7 +349,7 @@ const TableData = (props) => {
                                 </Form.Group>
 
                                 {/* <Form.Group
-                                  className="mb-3"
+                                  className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                                   controlId="formAmount"
                                 >
                                   <Form.Label>Amount</Form.Label>
@@ -362,7 +361,7 @@ const TableData = (props) => {
                                     onChange={handleChange}
                                   />
                                 </Form.Group> */}
-                                <div className="mb-3 flex gap-3">
+                                <div className="flex gap-4 mb-2">
                                   <Form.Group
                                     className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                                     controlId="formSelect"
@@ -370,16 +369,15 @@ const TableData = (props) => {
                                     <Form.Label>Currency</Form.Label>
                                     <Form.Select
                                       name="currency"
-                                      placeholder={
-                                        editingTransaction[0].currency
-                                      }
                                       value={values.currency}
                                       onChange={handleChange}
                                     >
-                                      <option value="">Choose...</option>
-                                      <option value="USD">USD</option>
-                                      <option value="EURO">EURO</option>
-                                      <option value="RUPEE">RUPEE</option>
+                                      <>
+                                        <option value="">Choose...</option>
+                                        <option value="USD">USD</option>
+                                        <option value="EURO">EURO</option>
+                                        <option value="RUPEE">RUPEE</option>
+                                      </>
                                     </Form.Select>
                                   </Form.Group>
 
@@ -391,7 +389,7 @@ const TableData = (props) => {
                                     <Form.Control
                                       name="amount"
                                       type="number"
-                                      placeholder={editingTransaction[0].amount}
+                                      placeholder={editTransactions[0].amount}
                                       value={values.amount}
                                       onChange={handleChange}
                                     />
@@ -400,14 +398,14 @@ const TableData = (props) => {
 
                                 <Form.Group
                                   className="mb-1 block text-base font-medium text-[#07074D]"
-                                  controlId="formName"
+                                  controlId="category"
                                 >
                                   <Form.Label>Category</Form.Label>
                                   <Form.Control
                                     name="category"
                                     type="text"
                                     className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
-                                    placeholder={editTransactions[0].category}
+                                    placeholder={editingTransaction[0].category}
                                     value={values.category}
                                     onChange={handleChange}
                                   />
@@ -447,7 +445,7 @@ const TableData = (props) => {
                                     >
                                       {editingTransaction[0].transactionType}
                                     </option>
-                                    <option value="Income">Income</option>
+                                    <option value="Credit">Income</option>
                                     <option value="Expense">Expense</option>
                                   </Form.Select>
                                 </Form.Group>
@@ -467,19 +465,19 @@ const TableData = (props) => {
                               </Form>
                             </Modal.Body>
                             <Modal.Footer>
-                              <Button
-                                variant="outline-danger"
+                              <button
+                                class=" hover:bg-red-500 text-red-700 font-semibold hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                                // variant="outline-danger"
                                 onClick={handleClose}
                               >
                                 Close
-                              </Button>
-                              <Button
-                                variant="outline-success"
-                                type="submit"
-                                onClick={handleEditSubmit}
+                              </button>
+                              <button
+                                class=" hover:bg-green-500 text-green-700 font-semibold hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                                onClick={handleEditClick}
                               >
                                 Submit
-                              </Button>
+                              </button>
                             </Modal.Footer>
                           </Modal>
                         </div>

@@ -40,6 +40,7 @@ const Home = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [view, setView] = useState("table");
+  const [currency, setCurrency] = useState();
 
   const handleStartChange = (date) => {
     setStartDate(date);
@@ -133,6 +134,15 @@ const Home = () => {
       toast.success(data.message, toastOptions);
       handleClose();
       setRefresh(!refresh);
+      setValues({
+        title: "",
+        amount: "",
+        description: "",
+        category: "",
+        date: "",
+        transactionType: "",
+        currency: "",
+      });
     } else {
       toast.error(data.message, toastOptions);
     }
@@ -181,37 +191,9 @@ const Home = () => {
     setView("chart");
   };
 
-  const handleDownloadPDF = () => {
-    const input = pdfRef.current;
-    html2canvas(input).then((canvas) => {
-      const pdf = new jsPDF("l", "mm", "a4", true);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width * 0.75;
-      const imgHeight = canvas.height * 0.75;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 30;
-
-      pdf.setFillColor("#ffffff");
-      pdf.rect(0, 0, pdfWidth, pdfHeight, "F");
-
-      const imgData = canvas.toDataURL("image/png");
-
-      pdf.addImage(
-        imgData,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio
-      );
-
-      pdf.save("analytics.pdf");
-    });
-  };
-
-  const pdfRef = useRef();
+  const categories = [
+    ...new Set(transactions.map((transaction) => transaction.category)),
+  ];
 
   return (
     <>
@@ -224,7 +206,6 @@ const Home = () => {
       ) : (
         <>
           <Container
-            ref={pdfRef}
             style={{ position: "relative", zIndex: "2 !important" }}
             className="mt-3"
           >
@@ -255,52 +236,85 @@ const Home = () => {
                   >
                     <option value="all">All</option>
                     <option value="expense">Expense</option>
-                    <option value="credit">Earned</option>
+                    <option value="credit">Income</option>
                   </Form.Select>
                 </Form.Group>
               </div>
 
               <div className="text-white iconBtnBox">
-                <FormatListBulletedIcon
+                {/* <FormatListBulletedIcon
                   sx={{ cursor: "pointer" }}
                   onClick={handleTableClick}
                   className={`${
                     view === "table" ? "iconActive" : "iconDeactive"
                   }`}
-                />
-                <BarChartIcon
+                /> */}
+                <lord-icon
+                  src="https://cdn.lordicon.com/yqiuuheo.json"
+                  trigger="hover"
+                  colors="primary:#242424,secondary:#ebe6ef"
+                  stroke="bold"
+                  state="loop-all"
+                  style={{ cursor: "pointer" }}
+                  onClick={handleTableClick}
+                ></lord-icon>
+                {/* <BarChartIcon
                   sx={{ cursor: "pointer" }}
                   onClick={handleChartClick}
                   className={`${
                     view === "chart" ? "iconActive" : "iconDeactive"
                   }`}
-                />
+                /> */}
+                <lord-icon
+                  src="https://cdn.lordicon.com/zsaomnmb.json"
+                  trigger="hover"
+                  style={{ cursor: "pointer" }}
+                  onClick={handleChartClick}
+                ></lord-icon>
               </div>
 
-              <div>
-                <Button onClick={handleShow} className="addNew">
+              <div className="flex">
+                {/* <Button
+                  variant="outline-primary"
+                  size="lg"
+                  onClick={handleShow}
+                  className="addNew"
+                >
                   Add New
-                </Button>
+                </Button> */}
+                <lord-icon
+                  src="https://cdn.lordicon.com/pdsourfn.json"
+                  trigger="hover"
+                  stroke="bold"
+                  onClick={handleShow}
+                  colors="primary:#121331,secondary:#ffffff,tertiary:#ebe6ef"
+                  style={{ width: "70px", height: "70px", cursor: "pointer" }}
+                ></lord-icon>
 
                 <Modal show={show} onHide={handleClose} centered>
                   <Modal.Header closeButton>
-                    <Modal.Title>Add Transaction Details</Modal.Title>
+                    <Modal.Title className="text-[#07074D]">
+                      Add Transaction Details
+                    </Modal.Title>
                   </Modal.Header>
                   <Modal.Body>
                     <Form>
                       <Form.Group className="mb-3" controlId="formName">
-                        <Form.Label>Title</Form.Label>
+                        <Form.Label className="mb-1 block text-base font-medium text-[#07074D]">
+                          Transaction Name
+                        </Form.Label>
                         <Form.Control
                           name="title"
                           type="text"
+                          className="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                           placeholder="Enter Transaction Name"
                           value={values.name}
                           onChange={handleChange}
                         />
                       </Form.Group>
-                      <div className="flex">
+                      <div className="mb-3 flex gap-3">
                         <Form.Group
-                          className="mb-3 w-1/2"
+                          className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                           controlId="formSelect"
                         >
                           <Form.Label>Currency</Form.Label>
@@ -317,7 +331,7 @@ const Home = () => {
                         </Form.Group>
 
                         <Form.Group
-                          className="mb-3 w-1/2"
+                          className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
                           controlId="formAmount"
                         >
                           <Form.Label>Amount</Form.Label>
@@ -330,52 +344,58 @@ const Home = () => {
                           />
                         </Form.Group>
                       </div>
-                      <Form.Group className="mb-3" controlId="formSelect">
+
+                      <Form.Group
+                        className="mb-1 block text-base font-medium text-[#07074D]"
+                        controlId="formName"
+                      >
                         <Form.Label>Category</Form.Label>
-                        <Form.Select
+                        <Form.Control
                           name="category"
+                          type="text"
+                          className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                          placeholder="Enter category"
                           value={values.category}
                           onChange={handleChange}
-                        >
-                          <option value="Education">Choose...</option>
-                          <option value="Groceries">Groceries</option>
-                          <option value="Rent">Rent</option>
-                          <option value="Salary">Salary</option>
-                          <option value="Tip">Tip</option>
-                          <option value="Food">Food</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Utilities">Utilities</option>
-                          <option value="Entertainment">Entertainment</option>
-                          <option value="Transportation">Transportation</option>
-                          <option value="Other">Other</option>
-                        </Form.Select>
+                        />
                       </Form.Group>
 
-                      <Form.Group className="mb-3" controlId="formDescription">
+                      <Form.Group
+                        className="mt-1 block text-base font-medium text-[#07074D]"
+                        controlId="formDescription"
+                      >
                         <Form.Label>Description</Form.Label>
                         <Form.Control
                           type="text"
                           name="description"
+                          className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                           placeholder="Enter Description"
                           value={values.description}
                           onChange={handleChange}
                         />
                       </Form.Group>
 
-                      <Form.Group className="mb-3" controlId="formSelect1">
+                      <Form.Group
+                        className="mt-1 block text-base font-medium text-[#07074D]"
+                        controlId="formSelect1"
+                      >
                         <Form.Label>Transaction Type</Form.Label>
                         <Form.Select
+                          className="mb-2"
                           name="transactionType"
                           value={values.transactionType}
                           onChange={handleChange}
                         >
                           <option value="">Choose...</option>
-                          <option value="credit">Credit</option>
+                          <option value="credit">Income</option>
                           <option value="expense">Expense</option>
                         </Form.Select>
                       </Form.Group>
 
-                      <Form.Group className="mb-3" controlId="formDate">
+                      <Form.Group
+                        className="mt-1 block text-base font-medium text-[#07074D]"
+                        controlId="formDate"
+                      >
                         <Form.Label>Date</Form.Label>
                         <Form.Control
                           type="date"
@@ -387,12 +407,19 @@ const Home = () => {
                     </Form>
                   </Modal.Body>
                   <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <button
+                      class=" hover:bg-red-500 text-red-700 font-semibold hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                      // variant="outline-danger"
+                      onClick={handleClose}
+                    >
                       Close
-                    </Button>
-                    <Button variant="primary" onClick={handleSubmit}>
+                    </button>
+                    <button
+                      class=" hover:bg-green-500 text-green-700 font-semibold hover:text-black py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                      onClick={handleSubmit}
+                    >
                       Submit
-                    </Button>
+                    </button>
                   </Modal.Footer>
                 </Modal>
               </div>
@@ -438,9 +465,16 @@ const Home = () => {
             )}
 
             <div className="containerBtn">
-              <Button variant="primary" onClick={handleReset}>
+              {/* <Button variant="outline-warning" onClick={handleReset}>
                 Reset Filter
-              </Button>
+              </Button> */}
+              <lord-icon
+                src="https://cdn.lordicon.com/cjbuodml.json"
+                trigger="hover"
+                colors="primary:#ffffff,secondary:#121331"
+                onClick={handleReset}
+                style={{ width: "50px", height: "50px", cursor: "pointer" }}
+              ></lord-icon>
             </div>
             {view === "table" ? (
               <>
@@ -448,13 +482,15 @@ const Home = () => {
               </>
             ) : (
               <>
-                <Analytics transactions={transactions} user={cUser} />
+                <Analytics
+                  transactions={transactions}
+                  user={cUser}
+                  categories={categories}
+                  currency={currency}
+                />
               </>
             )}
             <ToastContainer />
-            <Button variant="primary" onClick={handleDownloadPDF}>
-              Download PDF
-            </Button>
           </Container>
         </>
       )}

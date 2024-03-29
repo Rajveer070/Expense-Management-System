@@ -26,15 +26,20 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
     <div>
       <Modal show={isShow} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Update Transaction Details</Modal.Title>
+          <Modal.Title className="text-[#07074D]">
+            Update Transaction Details
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
             <Form.Group className="mb-3" controlId="formName">
-              <Form.Label>Title</Form.Label>
+              <Form.Label className="mb-1 block text-base font-medium text-[#07074D]">
+                Title
+              </Form.Label>
               <Form.Control
                 name="title"
                 type="text"
+                className="w-full rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 placeholder={transaction.title}
                 value={values.title}
                 onChange={handleChange}
@@ -42,7 +47,10 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
             </Form.Group>
 
             <div className="flex">
-              <Form.Group className="mb-3 w-1/2" controlId="formSelect">
+              <Form.Group
+                className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
+                controlId="formSelect"
+              >
                 <Form.Label>Currency</Form.Label>
                 <Form.Select
                   name="currency"
@@ -56,7 +64,10 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group className="mb-3 w-1/2" controlId="formAmount">
+              <Form.Group
+                className="w-1/2 mt-1 block text-base font-medium text-[#07074D]"
+                controlId="formAmount"
+              >
                 <Form.Label>Amount</Form.Label>
                 <Form.Control
                   name="amount"
@@ -68,39 +79,40 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
               </Form.Group>
             </div>
 
-            <Form.Group className="mb-3" controlId="formSelect">
+            <Form.Group
+              className="mb-1 block text-base font-medium text-[#07074D]"
+              controlId="category"
+            >
               <Form.Label>Category</Form.Label>
-              <Form.Select
+              <Form.Control
                 name="category"
+                type="text"
+                className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
+                placeholder={values.category}
                 value={values.category}
                 onChange={handleChange}
-              >
-                <option value="Education">Education</option>
-                <option value="groceries">Groceries</option>
-                <option value="rent">Rent</option>
-                <option value="rent">Salary</option>
-                <option value="rent">Tip</option>
-                <option value="rent">Food</option>
-                <option value="rent">Medical</option>
-                <option value="utilities">Utilities</option>
-                <option value="entertainment">Entertainment</option>
-                <option value="transportation">Transportation</option>
-                <option value="other">Other</option>
-              </Form.Select>
+              />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formDescription">
+            <Form.Group
+              className="mt-1 block text-base font-medium text-[#07074D]"
+              controlId="formDescription"
+            >
               <Form.Label>Description</Form.Label>
               <Form.Control
                 type="text"
                 name="description"
+                className="w-full mb-2 rounded-md border border-[#e0e0e0] bg-white py-2 px-4 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
                 placeholder={transaction.description}
                 value={values.description}
                 onChange={handleChange}
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formSelect1">
+            <Form.Group
+              className="mt-1 block text-base font-medium text-[#07074D]"
+              controlId="formSelect1"
+            >
               <Form.Label>Transaction Type</Form.Label>
               <Form.Select
                 name="transactionType"
@@ -108,12 +120,15 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
                 onChange={handleChange}
               >
                 <option value="">Choose...</option>
-                <option value="credit">Credit</option>
+                <option value="credit">Income</option>
                 <option value="expense">Expense</option>
               </Form.Select>
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formDate">
+            <Form.Group
+              className="mt-1 block text-base font-medium text-[#07074D]"
+              controlId="formDate"
+            >
               <Form.Label>Date</Form.Label>
               <Form.Control
                 type="date"
@@ -125,10 +140,10 @@ const ModelForm = ({ transaction, onClose, isShow }) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="outline-danger" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary">Submit</Button>
+          <Button variant="outline-success">Submit</Button>
         </Modal.Footer>
       </Modal>
     </div>
