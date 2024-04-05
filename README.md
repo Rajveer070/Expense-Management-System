@@ -9,7 +9,7 @@ To get started with the Expense Management System, follow these steps:
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Rajveer070/Expense-Management-System.git
 cd expense-management-system
 
 # Install frontend dependencies
